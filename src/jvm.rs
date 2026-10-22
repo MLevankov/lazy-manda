@@ -32,8 +32,8 @@ pub unsafe fn getJVMPtr() -> *mut SysJavaVM {
     use windows_sys::Win32::System::LibraryLoader::{GetModuleHandleA, GetProcAddress, LoadLibraryA};
 
     let mut handle = GetModuleHandleA(b"jvm.dll\0".as_ptr());
-    if handle.is_null() { handle = LoadLibraryA(b"jvm.dll\0".as_ptr()); }
-    if handle.is_null() { return ptr::null_mut(); }
+    if handle == 0 { handle = LoadLibraryA(b"jvm.dll\0".as_ptr()); }
+    if handle == 0 { return ptr::null_mut(); }
 
     let Some(procAddr) = GetProcAddress(handle, b"JNI_GetCreatedJavaVMs\0".as_ptr()) else {
         return ptr::null_mut();
