@@ -18,4 +18,4 @@ walkdir = "2"
 libc = "0.2"
 
 [target."cfg(windows)".dependencies]
-windows-sys = { version = "0.52", features = ["Win32_System_LibraryLoader"] }
+windows-sys = { version = "0.52", features = ["Win32_System_LibraryLoader", "Win32_Foundation"] }

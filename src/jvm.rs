@@ -35,11 +35,12 @@ pub unsafe fn getJVMPtr() -> *mut SysJavaVM {
     if handle.is_null() { handle = LoadLibraryA(b"jvm.dll\0".as_ptr()); }
     if handle.is_null() { return ptr::null_mut(); }
 
-    let procAddr = GetProcAddress(handle, b"JNI_GetCreatedJavaVMs\0".as_ptr());
-    if procAddr.is_null() { return ptr::null_mut(); }
+    let Some(procAddr) = GetProcAddress(handle, b"JNI_GetCreatedJavaVMs\0".as_ptr()) else {
+        return ptr::null_mut();
+    };
 
     let getVMs: GetCreatedJavaVMsFn = std::mem::transmute(procAddr);
-    let mut VMs: [*mut JavaVM; 2] = [ptr::null_mut(); 2];
+    let mut VMs: [*mut SysJavaVM; 2] = [ptr::null_mut(); 2]; // было *mut JavaVM
     let mut count: jsize = 0;
 
     if getVMs(VMs.as_mut_ptr(), 2, &mut count) == 0 && count > 0 { return VMs[0]; }
